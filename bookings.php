@@ -291,9 +291,8 @@ $trainers = getAllTrainers();
                             <label class="form-label">Payment Method</label>
                             <select class="form-select" name="payment_method" required>
                                 <option value="">Select payment method</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="debit_card">Debit Card</option>
-                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="gcash">GCash</option>
+                                <option value="paymaya">PayMaya</option>
                                 <option value="cash">Cash</option>
                             </select>
                         </div>
