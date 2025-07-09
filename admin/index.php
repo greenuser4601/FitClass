@@ -329,26 +329,33 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
 
             // Fetch users data
             fetch('../api/users.php')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.success) {
+                    console.log('Users API response:', data); // Debug log
+                    if (data.success && data.users) {
                         displayUsersData(data.users);
                     } else {
+                        console.error('API Error:', data.message || 'Unknown error');
                         document.getElementById('usersTableBody').innerHTML = `
                             <tr>
                                 <td colspan="2" class="text-center text-danger">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
+                                    <i class="fas fa-exclamation-triangle me-2"></i>${data.message || 'Error loading users'}
                                 </td>
                             </tr>
                         `;
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Fetch Error:', error);
                     document.getElementById('usersTableBody').innerHTML = `
                         <tr>
                             <td colspan="2" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
+                                <i class="fas fa-exclamation-triangle me-2"></i>Network error loading users
                             </td>
                         </tr>
                     `;
@@ -358,7 +365,7 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
         function displayUsersData(users) {
             const tbody = document.getElementById('usersTableBody');
 
-            if (users.length === 0) {
+            if (!users || users.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="2" class="text-center text-muted">
@@ -371,19 +378,23 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
 
             let html = '';
             users.forEach(user => {
+                // Safely get user name and complete bookings with fallbacks
+                const userName = user.name || 'Unknown User';
+                const completeBookings = user.complete_bookings || 0;
+                const userInitial = userName.charAt(0).toUpperCase();
 
                 html += `
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
-                                    ${user.name.charAt(0).toUpperCase()}
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                    ${userInitial}
                                 </div>
-                                <strong>${user.name}</strong>
+                                <strong>${userName}</strong>
                             </div>
                         </td>
                         <td>
-                            <span class="badge bg-info">${user.complete_bookings}</span>
+                            <span class="badge bg-info">${completeBookings}</span>
                         </td>
                     </tr>
                 `;
