@@ -1434,5 +1434,12 @@
             "new_status": "ongoing"
         },
         "ip_address": "172.31.128.59"
+    },
+    {
+        "timestamp": "2025-07-10 05:45:45",
+        "action": "user_login",
+        "user_id": 1,
+        "details": [],
+        "ip_address": "172.31.128.84"
     }
 ]
