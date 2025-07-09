@@ -45,14 +45,14 @@ function generateUniqueId($existing_items) {
     if (empty($existing_items)) {
         return 1;
     }
-
+    
     $max_id = 0;
     foreach ($existing_items as $item) {
         if (isset($item['id']) && $item['id'] > $max_id) {
             $max_id = $item['id'];
         }
     }
-
+    
     return $max_id + 1;
 }
 
@@ -62,14 +62,14 @@ function write_json_file($file_path, $data) {
     if ($json_data === false) {
         return false;
     }
-
+    
     $temp_file = $file_path . '.tmp';
     $result = file_put_contents($temp_file, $json_data, LOCK_EX);
-
+    
     if ($result !== false) {
         return rename($temp_file, $file_path);
     }
-
+    
     return false;
 }
 
@@ -82,7 +82,7 @@ function logActivity($action, $user_id, $details = []) {
         'details' => $details,
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
     ];
-
+    
     $activity_log = [];
     if (file_exists(ACTIVITY_LOG_FILE)) {
         $existing_log = file_get_contents(ACTIVITY_LOG_FILE);
@@ -90,14 +90,14 @@ function logActivity($action, $user_id, $details = []) {
             $activity_log = json_decode($existing_log, true) ?: [];
         }
     }
-
+    
     $activity_log[] = $log_entry;
-
+    
     // Keep only last 1000 entries
     if (count($activity_log) > 1000) {
         $activity_log = array_slice($activity_log, -1000);
     }
-
+    
     file_put_contents(ACTIVITY_LOG_FILE, json_encode($activity_log, JSON_PRETTY_PRINT));
 }
 
@@ -105,7 +105,7 @@ function logActivity($action, $user_id, $details = []) {
 function formatDateRange($start_date, $end_date) {
     $start = new DateTime($start_date);
     $end = new DateTime($end_date);
-
+    
     if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
         return $start->format('M j, Y');
     } else {
@@ -118,7 +118,7 @@ function getRecurringDaysString($days) {
     if (empty($days)) {
         return '';
     }
-
+    
     $day_names = [
         'monday' => 'Mon',
         'tuesday' => 'Tue',
@@ -128,14 +128,14 @@ function getRecurringDaysString($days) {
         'saturday' => 'Sat',
         'sunday' => 'Sun'
     ];
-
+    
     $day_strings = [];
     foreach ($days as $day) {
         if (isset($day_names[$day])) {
             $day_strings[] = $day_names[$day];
         }
     }
-
+    
     return implode(', ', $day_strings);
 }
 
@@ -155,20 +155,20 @@ function getUserBookingStats($user_id) {
     $user_bookings = array_filter($bookings, function($booking) use ($user_id) {
         return $booking['user_id'] == $user_id;
     });
-
+    
     $stats = [
         'total' => count($user_bookings),
         'confirmed' => 0,
         'pending' => 0,
         'cancelled' => 0
     ];
-
+    
     foreach ($user_bookings as $booking) {
         if (isset($stats[$booking['status']])) {
             $stats[$booking['status']]++;
         }
     }
-
+    
     return $stats;
 }
 
@@ -178,7 +178,7 @@ function getSystemStats() {
     $classes = getAllClasses();
     $trainers = getAllTrainers();
     $bookings = getAllBookings();
-
+    
     $total_revenue = 0;
     foreach ($bookings as $booking) {
         if ($booking['status'] === 'confirmed') {
@@ -188,7 +188,7 @@ function getSystemStats() {
             }
         }
     }
-
+    
     return [
         'total_users' => count($users),
         'total_classes' => count($classes),
@@ -207,74 +207,19 @@ function validateBookingDates($start_date, $end_date) {
     $end = new DateTime($end_date);
     $today = new DateTime('today');
     $max_date = new DateTime('+30 days');
-
+    
     if ($start < $today) {
         return ['valid' => false, 'message' => 'Start date cannot be in the past'];
     }
-
+    
     if ($end < $start) {
         return ['valid' => false, 'message' => 'End date must be after start date'];
     }
-
+    
     if ($end > $max_date) {
         return ['valid' => false, 'message' => 'Cannot book more than 30 days in advance'];
     }
-
+    
     return ['valid' => true, 'message' => ''];
-}
-
-// User management functions
-function createUser($name, $email, $password, $type = 'user') {
-    $users = getAllUsers();
-
-    // Check if email already exists
-    foreach ($users as $user) {
-        if ($user['email'] === $email) {
-            return false;
-        }
-    }
-
-    $new_user = [
-        'id' => generateUniqueId($users),
-        'name' => $name,
-        'email' => $email,
-        'password' => password_hash($password, PASSWORD_DEFAULT),
-        'type' => $type,
-        'created_at' => date('Y-m-d H:i:s')
-    ];
-
-    $users[] = $new_user;
-    return write_json_file(USERS_FILE, $users);
-}
-
-function updateUser($user_id, $user_data) {
-    $users = getAllUsers();
-
-    for ($i = 0; $i < count($users); $i++) {
-        if ($users[$i]['id'] == $user_id) {
-            // Update only provided fields
-            foreach ($user_data as $key => $value) {
-                if ($key !== 'id' && $key !== 'password') {
-                    $users[$i][$key] = $value;
-                }
-            }
-            return write_json_file(USERS_FILE, $users);
-        }
-    }
-
-    return false;
-}
-
-function deleteUser($user_id) {
-    $users = getAllUsers();
-
-    for ($i = 0; $i < count($users); $i++) {
-        if ($users[$i]['id'] == $user_id) {
-            array_splice($users, $i, 1);
-            return write_json_file(USERS_FILE, $users);
-        }
-    }
-
-    return false;
 }
 ?>

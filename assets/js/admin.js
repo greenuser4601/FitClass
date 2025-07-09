@@ -35,21 +35,10 @@ function initializeAdminFeatures() {
 // Refresh dashboard stats
 function refreshDashboardStats() {
     fetch('../api/dashboard-stats.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(text => {
-            try {
-                const data = JSON.parse(text);
-                if (data.success) {
-                    updateDashboardStats(data.stats);
-                }
-            } catch (e) {
-                console.error('JSON Parse Error:', e);
-                console.error('Response text:', text);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateDashboardStats(data.stats);
             }
         })
         .catch(error => {
