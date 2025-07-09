@@ -1,0 +1,22 @@
+{
+    "trainers": [
+        {
+            "id": 1,
+            "name": "Marcus Rodriguez",
+            "email": "marcus@fitclass.com",
+            "phone": "+63 917 123 4567",
+            "specialization": "HIIT & CrossFit",
+            "experience": 8,
+            "bio": "Certified personal trainer specializing in high-intensity workouts."
+        },
+        {
+            "id": 2,
+            "name": "Sofia Chen",
+            "email": "sofia@fitclass.com",
+            "phone": "+63 917 234 5678",
+            "specialization": "Yoga & Mindfulness",
+            "experience": 6,
+            "bio": "Registered yoga instructor with expertise in Hatha, Vinyasa, and restorative yoga."
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Admin User",
+            "email": "yuriwise@gmail.com",
+            "password": "admin123",
+            "type": "admin",
+            "created_at": "2025-01-01 00:00:00"
+        },
+        {
+            "id": 2,
+            "name": "Arjun Calixtro",
+            "email": "arjuncalixtro@gmail.com",
+            "password": "password123",
+            "type": "user",
+            "created_at": "2025-01-15 10:30:00"
+        },
+        {
+            "name": "Test User",
+            "email": "test@example.com",
+            "password": "password123",
+            "type": "user",
+            "id": 3,
+            "created_at": "2025-06-24 00:07:49"
+        },
+        {
+            "name": "Test User",
+            "email": "testuser2@example.com",
+            "password": "password123",
+            "type": "user",
+            "id": 4,
+            "created_at": "2025-06-24 00:09:09"
+        },
+        {
+            "name": "newuserme",
+            "email": "user123@email.com",
+            "password": "user123",
+            "type": "user",
+            "id": 5,
+            "created_at": "2025-06-24 00:30:45"
+        },
+        {
+            "name": "icyyuri",
+            "email": "icyyuri@gmail.com",
+            "password": "arjun22134",
+            "type": "user",
+            "id": 6,
+            "created_at": "2025-06-24 10:18:55"
+        },
+        {
+            "name": "migzmadelo",
+            "email": "migzmadelo@gmail.com",
+            "password": "arjun22134",
+            "type": "user",
+            "id": 7,
+            "created_at": "2025-06-24 13:47:02"
+        },
+        {
+            "name": "arjun",
+            "email": "arjunyasuo@gmail.com",
+            "password": "arjun123",
+            "type": "user",
+            "id": 8,
+            "created_at": "2025-06-24 13:53:43"
+        }
+    ]
+}

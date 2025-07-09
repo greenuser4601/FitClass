@@ -1,0 +1,25 @@
+run = "php -S 0.0.0.0:8000 -t ."
+modules = ["php-8.2", "nodejs-20", "web", "nix"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "php -S 0.0.0.0:8000 -t ."]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8000
+externalPort = 80
+
+[workflows]
+runButton = "Start FitClass Server"
+
+[[workflows.workflow]]
+name = "Start FitClass Server"
+author = 44679237
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php -S 0.0.0.0:8000 -t ."
