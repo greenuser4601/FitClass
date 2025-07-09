@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
 }
 
 try {
-    // Get all users
+    // Get all users from users.json
     $users = getAllUsers();
     
     if (!$users) {
@@ -25,12 +25,13 @@ try {
         exit();
     }
     
+    // Get all bookings from bookings.json
     $bookings = getAllBookings();
     if (!$bookings) {
         $bookings = [];
     }
     
-    // Count complete bookings for each user
+    // Process each user and count their complete bookings
     $users_with_stats = [];
     
     foreach ($users as $user) {
@@ -41,7 +42,7 @@ try {
         
         $complete_bookings = 0;
         
-        // Count completed bookings for this user
+        // Count completed bookings for this user (status: confirmed, paid, completed)
         foreach ($bookings as $booking) {
             if (isset($booking['user_id']) && isset($booking['status']) && 
                 $booking['user_id'] == $user['id'] && 
@@ -50,6 +51,7 @@ try {
             }
         }
         
+        // Add user with their complete booking count (0 if none)
         $users_with_stats[] = [
             'id' => $user['id'],
             'name' => $user['name'],
