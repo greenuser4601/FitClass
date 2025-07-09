@@ -265,14 +265,11 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Type</th>
-                                    <th>Complete Bookings</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
+                                        <tr>
+                                            <th>User Name</th>
+                                            <th>Complete Bookings</th>
+                                        </tr>
+                                    </thead>
                             <tbody id="usersTableBody">
                                 <!-- Users will be loaded here -->
                             </tbody>
@@ -288,13 +285,13 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/admin.js"></script>
-    
+
     <script>
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 const formData = new FormData();
                 formData.append('action', 'logout');
-                
+
                 fetch('../api/auth.php', {
                     method: 'POST',
                     body: formData
@@ -320,7 +317,7 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
             // Show loading state
             document.getElementById('usersTableBody').innerHTML = `
                 <tr>
-                    <td colspan="5" class="text-center">
+                    <td colspan="2" class="text-center">
                         <i class="fas fa-spinner fa-spin me-2"></i>Loading users...
                     </td>
                 </tr>
@@ -339,7 +336,7 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
                     } else {
                         document.getElementById('usersTableBody').innerHTML = `
                             <tr>
-                                <td colspan="5" class="text-center text-danger">
+                                <td colspan="2" class="text-center text-danger">
                                     <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
                                 </td>
                             </tr>
@@ -350,7 +347,7 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
                     console.error('Error:', error);
                     document.getElementById('usersTableBody').innerHTML = `
                         <tr>
-                            <td colspan="5" class="text-center text-danger">
+                            <td colspan="2" class="text-center text-danger">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
                             </td>
                         </tr>
@@ -360,11 +357,11 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
 
         function displayUsersData(users) {
             const tbody = document.getElementById('usersTableBody');
-            
+
             if (users.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="text-center text-muted">
+                        <td colspan="2" class="text-center text-muted">
                             <i class="fas fa-users me-2"></i>No users found
                         </td>
                     </tr>
@@ -374,13 +371,6 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
 
             let html = '';
             users.forEach(user => {
-                const statusBadge = user.type === 'admin' ? 
-                    '<span class="badge bg-danger">Admin</span>' : 
-                    '<span class="badge bg-primary">User</span>';
-
-                const activeStatus = user.complete_bookings > 0 ? 
-                    '<span class="badge bg-success">Active</span>' : 
-                    '<span class="badge bg-secondary">Inactive</span>';
 
                 html += `
                     <tr>
@@ -392,12 +382,9 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
                                 <strong>${user.name}</strong>
                             </div>
                         </td>
-                        <td>${user.email}</td>
-                        <td>${statusBadge}</td>
                         <td>
                             <span class="badge bg-info">${user.complete_bookings}</span>
                         </td>
-                        <td>${activeStatus}</td>
                     </tr>
                 `;
             });
