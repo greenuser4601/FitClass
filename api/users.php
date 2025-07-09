@@ -1,7 +1,10 @@
 <?php
-session_start();
 require_once '../includes/config.php';
 
+// Start output buffering to prevent header issues
+ob_start();
+
+session_start();
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
 

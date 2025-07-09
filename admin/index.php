@@ -106,39 +106,39 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
         </div>
 
         <!-- Statistics Cards -->
-        <div class="row mb-4">
+        <div class="row mb-4 stats-row">
             <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card text-center h-100 clickable-card" data-stat="total_users" style="cursor: pointer;" onclick="showUsersModal()">
+                <div class="card admin-stats-card clickable-card" data-stat="total_users" style="cursor: pointer;" onclick="showUsersModal()">
                     <div class="card-body">
-                        <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                        <i class="fas fa-users fa-2x text-primary"></i>
                         <h3 class="fw-bold text-primary"><?php echo $total_users; ?></h3>
                         <p class="text-muted mb-0">Total Users</p>
                         <small class="text-muted">Click to view details</small>
                     </div>
                 </div>
-            </div></div>
+            </div>
             <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card text-center h-100" data-stat="total_classes">
+                <div class="card admin-stats-card" data-stat="total_classes">
                     <div class="card-body">
-                        <i class="fas fa-dumbbell fa-2x text-success mb-3"></i>
+                        <i class="fas fa-dumbbell fa-2x text-success"></i>
                         <h3 class="fw-bold text-success"><?php echo $total_classes; ?></h3>
                         <p class="text-muted mb-0">Active Classes</p>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card text-center h-100" data-stat="total_trainers">
+                <div class="card admin-stats-card" data-stat="total_trainers">
                     <div class="card-body">
-                        <i class="fas fa-user-tie fa-2x text-warning mb-3"></i>
+                        <i class="fas fa-user-tie fa-2x text-warning"></i>
                         <h3 class="fw-bold text-warning"><?php echo $total_trainers; ?></h3>
                         <p class="text-muted mb-0">Trainers</p>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card text-center h-100" data-stat="total_revenue">
+                <div class="card admin-stats-card" data-stat="total_revenue">
                     <div class="card-body">
-                        <i class="fas fa-peso-sign fa-2x text-info mb-3"></i>
+                        <i class="fas fa-peso-sign fa-2x text-info"></i>
                         <h3 class="fw-bold text-info">₱<?php echo number_format($total_revenue, 2); ?></h3>
                         <p class="text-muted mb-0">Total Revenue</p>
                     </div>
@@ -265,11 +265,11 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                        <tr>
-                                            <th>User Name</th>
-                                            <th>Complete Bookings</th>
-                                        </tr>
-                                    </thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>Complete Bookings</th>
+                                </tr>
+                            </thead>
                             <tbody id="usersTableBody">
                                 <!-- Users will be loaded here -->
                             </tbody>

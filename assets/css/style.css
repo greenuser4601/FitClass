@@ -1069,6 +1069,75 @@ h1, h2, h3, h4, h5, h6 {
     color: #1d4ed8 !important;
 }
 
+/* Admin dashboard specific styles */
+.admin-stats-card {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-stats-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.admin-stats-card i {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.admin-stats-card h3 {
+    margin: 0.5rem 0;
+    line-height: 1.2;
+}
+
+.admin-stats-card p {
+    margin: 0.25rem 0;
+}
+
+.admin-stats-card small {
+    margin-top: 0.5rem;
+    opacity: 0.8;
+}
+
+/* Better responsive behavior for admin cards */
+@media (max-width: 768px) {
+    .admin-stats-card {
+        min-height: 140px;
+    }
+    
+    .admin-stats-card .card-body {
+        padding: 1rem;
+    }
+    
+    .admin-stats-card i {
+        font-size: 1.5rem !important;
+    }
+    
+    .admin-stats-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Ensure equal height for all stats cards */
+.stats-row .card {
+    height: 100%;
+}
+
+.stats-row .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 140px;
+}
+
 /* Avatar styles for user modal */
 .avatar-sm {
     width: 32px;
