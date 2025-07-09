@@ -1,64 +1,75 @@
+
 <?php
 session_start();
 require_once '../includes/config.php';
 
 header('Content-Type: application/json');
-header('Cache-Control: no-cache, must-revalidate');
 
-// Check admin access
 if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
-    http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit();
 }
 
-try {
-    // Get all users from users.json
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'GET') {
     $users = getAllUsers();
-
-    if (!$users) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Failed to load users data'
-        ]);
-        exit();
-    }
-
-    // Format users data (without booking count)
-    $users_list = [];
-
-    foreach ($users as $user) {
-        // Ensure user has required fields
-        if (!isset($user['id']) || !isset($user['name'])) {
-            continue;
-        }
-
-        $users_list[] = [
-            'id' => $user['id'],
-            'name' => $user['name'],
-            'email' => $user['email'] ?? '',
-            'type' => $user['type'] ?? 'user',
-            'created_at' => $user['created_at'] ?? ''
-        ];
-    }
-
-    // Sort users by name
-    usort($users_list, function($a, $b) {
-        return strcmp($a['name'], $b['name']);
-    });
-
+    
+    // Remove sensitive data
+    $safe_users = array_map(function($user) {
+        unset($user['password']);
+        return $user;
+    }, $users);
+    
     echo json_encode([
         'success' => true,
-        'users' => $users_list,
-        'total_count' => count($users_list)
+        'users' => $safe_users,
+        'total_count' => count($safe_users)
     ]);
-
-} catch (Exception $e) {
-    error_log('Users API Error: ' . $e->getMessage());
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Server error: ' . $e->getMessage()
-    ]);
+} elseif ($method === 'POST') {
+    $action = $_POST['action'] ?? '';
+    
+    switch ($action) {
+        case 'delete':
+            $user_id = intval($_POST['user_id'] ?? 0);
+            if ($user_id > 0) {
+                if (deleteUser($user_id)) {
+                    echo json_encode(['success' => true, 'message' => 'User deleted successfully']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to delete user']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid user ID']);
+            }
+            break;
+            
+        case 'update':
+            $user_id = intval($_POST['user_id'] ?? 0);
+            $name = sanitize_input($_POST['name'] ?? '');
+            $email = sanitize_input($_POST['email'] ?? '');
+            $type = sanitize_input($_POST['type'] ?? '');
+            
+            if ($user_id > 0 && $name && $email && $type) {
+                $user_data = [
+                    'name' => $name,
+                    'email' => $email,
+                    'type' => $type
+                ];
+                
+                if (updateUser($user_id, $user_data)) {
+                    echo json_encode(['success' => true, 'message' => 'User updated successfully']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to update user']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid user data']);
+            }
+            break;
+            
+        default:
+            echo json_encode(['success' => false, 'message' => 'Invalid action']);
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
 }
 ?>
