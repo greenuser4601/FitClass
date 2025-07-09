@@ -108,14 +108,15 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
         <!-- Statistics Cards -->
         <div class="row mb-4">
             <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card text-center h-100" data-stat="total_users">
+                <div class="card text-center h-100 clickable-card" data-stat="total_users" style="cursor: pointer;" onclick="showUsersModal()">
                     <div class="card-body">
                         <i class="fas fa-users fa-2x text-primary mb-3"></i>
                         <h3 class="fw-bold text-primary"><?php echo $total_users; ?></h3>
                         <p class="text-muted mb-0">Total Users</p>
+                        <small class="text-muted">Click to view details</small>
                     </div>
                 </div>
-            </div>
+            </div></div>
             <div class="col-xl-3 col-md-6 mb-3">
                 <div class="card text-center h-100" data-stat="total_classes">
                     <div class="card-body">
@@ -250,6 +251,41 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
         </div>
     </div>
 
+    <!-- Users Modal -->
+    <div class="modal fade" id="usersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-users me-2"></i>Users Overview
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Complete Bookings</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/admin.js"></script>
     
@@ -278,6 +314,95 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
         function exportBookings() {
             showNotification('Preparing export...', 'info');
             window.location.href = '../api/bookings.php?export=csv';
+        }
+
+        function showUsersModal() {
+            // Show loading state
+            document.getElementById('usersTableBody').innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading users...
+                    </td>
+                </tr>
+            `;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('usersModal'));
+            modal.show();
+
+            // Fetch users data
+            fetch('../api/users.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayUsersData(data.users);
+                    } else {
+                        document.getElementById('usersTableBody').innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center text-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('usersTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Error loading users
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function displayUsersData(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-users me-2"></i>No users found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            users.forEach(user => {
+                const statusBadge = user.type === 'admin' ? 
+                    '<span class="badge bg-danger">Admin</span>' : 
+                    '<span class="badge bg-primary">User</span>';
+
+                const activeStatus = user.complete_bookings > 0 ? 
+                    '<span class="badge bg-success">Active</span>' : 
+                    '<span class="badge bg-secondary">Inactive</span>';
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                    ${user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <strong>${user.name}</strong>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <span class="badge bg-info">${user.complete_bookings}</span>
+                        </td>
+                        <td>${activeStatus}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
         }
     </script>
 </body>

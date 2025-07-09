@@ -1048,3 +1048,31 @@ h1, h2, h3, h4, h5, h6 {
 .skip-link:focus {
     top: 6px;
 }
+
+/* Admin Styles */
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Clickable card styles */
+.clickable-card {
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #2563eb;
+}
+
+.clickable-card:hover .text-primary {
+    color: #1d4ed8 !important;
+}
+
+/* Avatar styles for user modal */
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: 600;
+}
