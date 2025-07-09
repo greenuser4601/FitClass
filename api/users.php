@@ -24,7 +24,7 @@ try {
         
         // Count completed bookings for this user
         foreach ($bookings as $booking) {
-            if ($booking['user_id'] == $user['id'] && $booking['status'] === 'completed') {
+            if ($booking['user_id'] == $user['id'] && in_array($booking['status'], ['confirmed', 'paid', 'completed'])) {
                 $complete_bookings++;
             }
         }
