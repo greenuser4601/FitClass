@@ -327,35 +327,64 @@ $recent_bookings = array_slice(array_reverse($bookings), 0, 5);
             const modal = new bootstrap.Modal(document.getElementById('usersModal'));
             modal.show();
 
-            // Fetch users data
-            fetch('../api/users.php')
+            // Fetch users data with retry mechanism
+            fetchUsersWithRetry(3);
+        }
+
+        function fetchUsersWithRetry(retries = 3) {
+            fetch('../api/users.php', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            })
                 .then(response => {
+                    console.log('Response status:', response.status);
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    return response.json();
+                    return response.text();
                 })
-                .then(data => {
-                    console.log('Users API response:', data); // Debug log
-                    if (data.success && data.users) {
-                        displayUsersData(data.users);
-                    } else {
-                        console.error('API Error:', data.message || 'Unknown error');
-                        document.getElementById('usersTableBody').innerHTML = `
-                            <tr>
-                                <td colspan="2" class="text-center text-danger">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>${data.message || 'Error loading users'}
-                                </td>
-                            </tr>
-                        `;
+                .then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Parsed data:', data);
+                        
+                        if (data.success && data.users) {
+                            displayUsersData(data.users);
+                        } else {
+                            console.error('API Error:', data.message || 'Unknown error');
+                            document.getElementById('usersTableBody').innerHTML = `
+                                <tr>
+                                    <td colspan="2" class="text-center text-danger">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>${data.message || 'Error loading users'}
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    } catch (parseError) {
+                        console.error('JSON Parse Error:', parseError);
+                        console.error('Response text:', text);
+                        throw new Error('Invalid JSON response from server');
                     }
                 })
                 .catch(error => {
                     console.error('Fetch Error:', error);
+                    
+                    if (retries > 1) {
+                        console.log(`Retrying... (${retries - 1} attempts left)`);
+                        setTimeout(() => fetchUsersWithRetry(retries - 1), 1000);
+                        return;
+                    }
+                    
                     document.getElementById('usersTableBody').innerHTML = `
                         <tr>
                             <td colspan="2" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Network error loading users
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Network error: ${error.message}
+                                <br><small>Please check your connection and try again</small>
                             </td>
                         </tr>
                     `;
